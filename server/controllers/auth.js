@@ -1,10 +1,10 @@
-import User from "..models/User.js";
-import bcrypt from "bcryptjs";
-import { createError } from "../utils/error.js";
-import jwt from "jsonwebtoken";
+const User = require("../models/User.js");
+const bcrypt = require("bcryptjs");
+const  { createError } = require("../utils/error.js");
+const jwt = require("jsonwebtoken");
 
 
-export const register = async (req, res, next) => {
+const register = async (req, res, next) => {
     try {
         const reg = await User.findOne({ email: req.body.email });
         if (reg) {
@@ -27,7 +27,7 @@ export const register = async (req, res, next) => {
     }
 };
 
-export const login = async (req, res, next) => {
+const login = async (req, res, next) => {
     try {
         const user = await User.findOne({ username: req.body.username });
         if(!user) 
@@ -57,3 +57,5 @@ export const login = async (req, res, next) => {
         next(error);
     }
 };
+
+module.exports = { register, login };

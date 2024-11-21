@@ -1,27 +1,33 @@
-import Routine from "../models/Routine.js"
-import User from "../models/User.js"
+const Routine = require("../models/Routine.js");
+const User = require("../models/User.js");
 
-export const createRoutine = async (req, res, next) => {
+// Create Routine
+const createRoutine = async (req, res, next) => {
+    const newRoutine = new Routine(req.body);
 
-    const newRoutine =  new Routine(req.body);
     try {
         const savedRoutine = await newRoutine.save();
 
         try {
             const user = await User.findById(savedRoutine.author);
-            User.routines.push(savedRoutine._id);
-            await User.save();
-        }
-        catch (error) {
-            next (error)
-        }
-    res.status(200).json(savedRoutine);
-} catch (error) {
-        next (error);
-    }
-}
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
 
-export const updateRoutine = async (req, res, next) => {
+            user.routines.push(savedRoutine._id);
+            await user.save();
+        } catch (error) {
+            return res.status(500).json({ message: `Error updating user: ${error.message}` });
+        }
+
+        res.status(201).json(savedRoutine);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Update Routine
+const updateRoutine = async (req, res, next) => {
     try {
         const routine = await Routine.findByIdAndUpdate(
             req.params.id,
@@ -30,26 +36,36 @@ export const updateRoutine = async (req, res, next) => {
         );
         res.status(200).json(routine);
     } catch (error) {
-        next (error);
+        next(error);
     }
-}
+};
 
-export const deleteRoutine = async (req, res, next) => {
+// Delete Routine
+const deleteRoutine = async (req, res, next) => {
     try {
         await Routine.findByIdAndDelete(req.params.id);
-        res.status(200).json("the routine has been deleted");
+        res.status(200).json("The routine has been deleted");
     } catch (error) {
-        next (error);
+        next(error);
     }
-}
+};
 
-export const getRoutines = async (req, res, next ) => {
+// Get Routines
+const getRoutines = async (req, res, next) => {
     const userId = req.params.userId;
 
     try {
         const routines = await Routine.find({ author: userId });
         res.status(200).json(routines);
     } catch (error) {
-        next (error);
+        next(error);
     }
-}
+};
+
+module.exports = {
+    createRoutine,
+    updateRoutine,
+    deleteRoutine,
+    getRoutines,
+};
+ 

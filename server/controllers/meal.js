@@ -1,7 +1,7 @@
+const Meal = require("../models/Meal.js");
+const User = require("../models/User.js");
 
-
-
-export const createMeal = async (req, res, next) => {
+const createMeal = async (req, res, next) => {
     const newMeal = new Meal(req.body);
     try {
         const saveMeal = await newMeal.save();
@@ -19,7 +19,7 @@ export const createMeal = async (req, res, next) => {
     }
 };
 
-export const updateMeal = async (req, res, next ) => {
+const updateMeal = async (req, res, next ) => {
     try {
         const meal = await Meal.findByIdAndUpdate(
             req.params.id,
@@ -32,3 +32,29 @@ export const updateMeal = async (req, res, next ) => {
     }
 };
 
+const deleteMeal = async (req, res, next) => {
+    try {
+        await Meal.findByIdDelete(req.params.id);
+        res.status(200).json("the meal has been deleted");
+    } catch (error) {
+        next (error);
+    }
+};
+
+const getMeals = async (req, res, next) => {
+    const userId = req.params.userId;
+
+    try {
+        const meals = await Meal.find({ author: userId });
+        res.status(200).json(meals);
+    } catch (error) {
+        next (error);
+    }
+}
+
+module.exports = {
+    createMeal,
+    updateMeal,
+    getMeals,
+    deleteMeal 
+}

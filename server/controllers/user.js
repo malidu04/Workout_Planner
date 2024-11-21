@@ -1,41 +1,41 @@
-import User from "../models/User.js";
+const User = require("../models/User.js");
 
-export const updateUser = async (req, res, next) => {
+exports.updateUser = async (req, res, next) => {
     try {
-        const updateUser = await User.findByAndUpdate(
+        const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
             { $set: req.body },
             { new: true }
         );
-        res.status(200).json(updateUser);
+        res.status(200).json(updatedUser);
     } catch (error) {
-        next (error);
+        next(error);
     }
 };
 
-export const deleteUser = async (req, res, next) => {
+exports.deleteUser = async (req, res, next) => {
     try {
-        await User.findByAndDelete(req.params.id);
+        await User.findByIdAndDelete(req.params.id);
         res.status(200).json("User has been deleted.");
     } catch (error) {
         next(error);
     }
 };
 
-export const getUser = async (req, res, next) => {
+exports.getUser = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id).populate('posts');
         res.status(200).json(user);
     } catch (error) {
-        next (error);
+        next(error);
     }
 };
 
-export const getUsers = async (req, res, next) => {
+exports.getUsers = async (req, res, next) => {
     try {
         const users = await User.find();
         res.status(200).json(users);
     } catch (error) {
-        next (error);
+        next(error);
     }
 };
