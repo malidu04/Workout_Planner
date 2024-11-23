@@ -18,5 +18,74 @@ const CreateEntry = ({ setOpen }) => {
 
     const handleClick = async (e) => {
         e.preventDefault();
+
+        const newEntry = {
+            ...info, author: user._id
+        }
+        try {
+            await axios.post('http://localhost:2000/api/entries/', newEntry, {
+                withCredentials: false
+            })
+            setOpen(false)
+            console.log(newEntry)
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
+
+    const handleMultiSelectChange = (e) => {
+        const { id, options} = e.target;
+        const selectOptions = Array.from(options)
+            .filter(option => option.selected)
+            .map(option => option.value);
+        setInfo(prev => ({ ...prev, [id]: selectOptions }));
+    }
+
+    return (
+        <div className='modal'>
+            <div className='mContainer'>
+                <FontAwesomeIcon icon={faXmark} className='mClose' onClick={() => setOpen(false)} />
+
+                    <div className='mTItle'>Create Entry</div>
+                    <form>
+                        <input 
+                            className='formInput'
+                            type='date'
+                            onChange={handleChange}
+                            id="date"
+                        />
+                    <div className="formInput" id='options'>
+                        <label>Choose Meals</label>
+                        <select
+                            id="meals"
+                            multiple
+                            onChange={handleMultiSelectChange}
+                        >
+                            {data?.meals?.map((meal, index) => (
+                                <option key={index} value={meal._id}>{meal.name}</option>
+                            ))}
+                        </select>
+                    </div> 
+                    <div className="formInput" id='options'>
+                        <label>Choose Routines</label>
+                        <select
+                            id="routines"
+                            multiple
+                            onChange={handleMultiSelectChange}
+                        >
+                            {data?.routines?.map((routine, index) => (
+                                <option key={index} value={routine._id}>{routine.name}</option>
+                            ))}
+                        </select>
+                    </div>   
+                    </form>
+                    <button className="mButton" onClick={handleClick}>
+                    Submit
+                </button>
+            </div>
+        </div>
+    )
 }
+
+export default CreateEntry;
