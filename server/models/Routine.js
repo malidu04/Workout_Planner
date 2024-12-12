@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+//models/Routine.js
+
+import mongoose from "mongoose";
 
 const RoutineSchema = new mongoose.Schema(
     {
@@ -14,6 +16,6 @@ const RoutineSchema = new mongoose.Schema(
     {
         timestamps: true
     }
-);
+)
 
-module.exports = mongoose.model("Routine", RoutineSchema);
+export default mongoose.model("Routine", RoutineSchema);

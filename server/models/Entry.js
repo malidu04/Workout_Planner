@@ -1,8 +1,10 @@
-const mongoose = require("mongoose");
+//models/Entry.js
+
+import mongoose from "mongoose";
 
 const EntrySchema = new mongoose.Schema(
     {
-        data: { type: Date, required: true },
+        date: { type: Date, required: true },
         routines: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -24,6 +26,6 @@ const EntrySchema = new mongoose.Schema(
     {
         timestamps: true
     }
-);
+)
 
-module.exports = mongoose.model("Entry", EntrySchema);
+export default mongoose.model("Entry", EntrySchema);

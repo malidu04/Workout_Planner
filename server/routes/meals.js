@@ -1,16 +1,20 @@
-const express = require("express");
-const {
-    createMeal,
-    deleteMeal,
-    getMeals,
-    updateMeal,
-} = require("../controllers/meal.js");
+//routes/entries.js
+
+import express from "express";
+import {
+    createEntry,
+    deleteEntry,
+    getEntries,
+    updateEntry,
+    getMealsAndRoutines,
+} from "../controllers/entry.js";
 
 const router = express.Router();
 
-router.post("/", createMeal);
-router.put("/:id", updateMeal);
-router.delete("/:id", deleteMeal);
-router.get("/:userId", getMeals);
+router.post("/", createEntry);
+router.put("/:id", updateEntry);
+router.delete("/:id", deleteEntry);
+router.get("/:userId", getEntries);
+router.get("/fetchMealsAndRoutines/:id", getMealsAndRoutines)
 
-module.exports = router;
+export default router;

@@ -1,12 +1,14 @@
-export const WorkouType = [
+//data.js
+
+export const WorkoutType = [
     "Cardio", "HIIT", "Strength Training", "Yoga", "Zumba"
 ]
 
 export const BodyPart = [
-    'Chest',
-    'Back',
-    'Arms',
-    'Shoulders',
+    'Chest', 
+    'Back',  
+    'Arms',  
+    'Shoulders',  
     'Legs',
     'Whole',
     'Glutes',
@@ -17,7 +19,7 @@ export const category = [
     'Appetizer & Snacks',
     'Baking',
     'Grill',
-    'Breakfast & Lunch',
+    'Breakfast & Brunch',
     'Salads',
     'Drinks',
     'Junk',

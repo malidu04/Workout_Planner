@@ -1,10 +1,12 @@
-const express = require("express");
-const {
+//routes/routines.js
+
+import express from "express";
+import {
     createRoutine,
     deleteRoutine,
     getRoutines,
     updateRoutine,
-} = require("../controllers/routine.js");
+} from "../controllers/routine.js";
 
 const router = express.Router();
 
@@ -13,4 +15,4 @@ router.put("/:id", updateRoutine);
 router.delete("/:id", deleteRoutine);
 router.get("/:userId", getRoutines);
 
-module.exports = router;
+export default router;

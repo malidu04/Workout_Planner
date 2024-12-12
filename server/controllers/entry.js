@@ -1,89 +1,97 @@
-const Entry = require("../models/Entry.js");
-const User = require("../models/User.js");
-const Routine = require("../models/Routine.js");
-const Meal = require("../models/Meal.js");
+//controllers/entry.js
 
-const createEntry = async (req, res, next) => {
+import Entry from "../models/Entry.js"
+import User from "../models/User.js"
+import Routine from "../models/Routine.js"
+import Meal from "../models/Meal.js"
+
+export const createEntry = async (req, res, next) => {
+
     const newEntry = new Entry(req.body);
     try {
         const savedEntry = await newEntry.save();
-        const user = await User.findById(savedEntry.author);
-        user.entries.push(savedEntry._id);
-        await user.save();
-        res.status(200).json(savedEntry);
-    } catch (error) {
-        next(error);
-    }
-}
 
-const updateEntry = async (req, res, next) => {
+        try {
+            const user = await User.findById(savedEntry.author);
+            user.entries.push(savedEntry._id);
+            await user.save();
+        }
+        catch (err) {
+            next(err)
+        }
+        res.status(200).json(savedEntry);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const updateEntry = async (req, res, next) => {
     try {
         const entry = await Entry.findByIdAndUpdate(
             req.params.id,
             { $set: req.body },
             { new: true }
         );
-        if (!entry) {
-            return res.status(404).json({ message: "Entry not found" });
-        }
         res.status(200).json(entry);
-    } catch (error) {
-        next(error);
-    }
-}
-
-const deleteEntry = async (req, res, next) => {
-    try {
-        const entry = await Entry.findByIdAndDelete(req.params.id);
-        if (!entry) {
-            return res.status(404).json({ message: "Entry not found" });
-        }
-        // Remove the entry from user's entries list
-        await User.findByIdAndUpdate(
-            entry.author,
-            { $pull: { entries: entry._id } },
-            { new: true }
-        );
-        res.status(200).json("The entry has been deleted");
-    } catch (error) {
-        next(error);
+    } catch (err) {
+        next(err);
     }
 };
 
-const getEntries = async (req, res, next) => {
+export const deleteEntry = async (req, res, next) => {
+    try {
+        await Entry.findByIdAndDelete(req.params.id);
+
+        try {
+
+            await User.findOneAndUpdate(
+                { entries: req.params.id }, 
+                { $pull: { entries: req.params.id } },
+                { new: true }
+            );
+        }
+
+        catch (err) {
+            next(err)
+        }
+
+        res.status(200).json("the entry has been deleted");
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+export const getEntries = async (req, res, next) => {
     const userId = req.params.userId;
     try {
         const entries = await Entry.find({ author: userId })
             .populate('meals', 'name')
-            .populate('routines', 'name');
-        if (!entries) {
-            return res.status(404).json({ message: "No entries found" });
-        }
-        res.status(200).json(entries); 
-    } catch (error) {
-        next(error);
+            .populate('routines', 'name')
+        res.status(200).json(entries);
+    } catch (err) {
+        next(err)
     }
-};
+}
 
-const getMealsAndRoutines = async (req, res, next) => {
-    const userId = req.params.id;
+export const getMealsAndRoutines = async (req, res, next) => {
+    const userId = req.params.id
+    let userRoutines, userMeals;
     try {
-        const userRoutines = await Routine.find({ author: userId }).select('name').exec();
-        const userMeals = await Meal.find({ author: userId }).select('name').exec();
-        const result = {
-            routines: userRoutines,
-            meals: userMeals
-        };
-        res.status(200).json(result);
-    } catch (error) {
-        next(error);
+        userRoutines = await Routine.find({ author: userId }).select('name _id').exec();
     }
-};
-
-module.exports = {
-    createEntry,
-    updateEntry,
-    deleteEntry,
-    getEntries,
-    getMealsAndRoutines
-};
+    catch (err) {
+        next(err)
+    }
+    try {
+        userMeals = await Meal.find({ author: userId }).select('name _id').exec();
+    }
+    catch (error) {
+        next(err)
+    }
+    const result = {
+        routines: userRoutines,
+        meals: userMeals
+    }
+    res.status(200).json(result);
+}

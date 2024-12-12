@@ -1,25 +1,29 @@
-const Meal = require("../models/Meal.js");
-const User = require("../models/User.js");
+//controllers/meal.js
 
-const createMeal = async (req, res, next) => {
+import Meal from "../models/Meal.js"
+import User from "../models/User.js"
+
+export const createMeal = async (req, res, next) => {
+
     const newMeal = new Meal(req.body);
     try {
-        const saveMeal = await newMeal.save();
+        const savedMeal = await newMeal.save();
 
         try {
-            const user = await User.findById(saveMeal.author);
-            user.meals.push(saveMeal._id);
+            const user = await User.findById(savedMeal.author);
+            user.meals.push(savedMeal._id);
             await user.save();
-        } catch (error) {
-            next (error)
         }
-        res.status(200).json(newMeal);
-    } catch (error) {
-        next (error);
+        catch (err) {
+            next(err)
+        }
+        res.status(200).json(savedMeal);
+    } catch (err) {
+        next(err);
     }
 };
 
-const updateMeal = async (req, res, next ) => {
+export const updateMeal = async (req, res, next) => {
     try {
         const meal = await Meal.findByIdAndUpdate(
             req.params.id,
@@ -27,34 +31,29 @@ const updateMeal = async (req, res, next ) => {
             { new: true }
         );
         res.status(200).json(meal);
-    } catch (error) {
-        next (error);
+    } catch (err) {
+        next(err);
     }
 };
 
-const deleteMeal = async (req, res, next) => {
+export const deleteMeal = async (req, res, next) => {
     try {
-        await Meal.findByIdDelete(req.params.id);
-        res.status(200).json("the meal has been deleted");
-    } catch (error) {
-        next (error);
+        await Meal.findByIdAndDelete(req.params.id);
+        res.status(200).json("the Meal has been deleted");
+    } catch (err) {
+        next(err);
     }
 };
 
-const getMeals = async (req, res, next) => {
+
+
+export const getMeals = async (req, res, next) => {
     const userId = req.params.userId;
 
     try {
         const meals = await Meal.find({ author: userId });
         res.status(200).json(meals);
-    } catch (error) {
-        next (error);
+    } catch (err) {
+        next(err)
     }
-}
-
-module.exports = {
-    createMeal,
-    updateMeal,
-    getMeals,
-    deleteMeal 
 }
